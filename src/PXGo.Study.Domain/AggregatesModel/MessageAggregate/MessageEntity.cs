@@ -1,5 +1,4 @@
-﻿using PXGo.Study.Domain.AggregatesModel.Enums;
-using PXGo.Study.Domain.SeedWork;
+﻿using PXGo.Study.Domain.SeedWork;
 
 namespace PXGo.Study.Domain.AggregatesModel.MessageAggregate;
 

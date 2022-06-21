@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using PXGo.Study.Domain.AggregatesModel.Enums;
+using PXGo.Study.Domain.AggregatesModel.MessageAggregate;
 
 namespace PXGo.Study.API.Application.Commands.Message;
 

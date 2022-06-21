@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PXGo.Study.Domain.AggregatesModel.Enums;
 using PXGo.Study.Domain.AggregatesModel.MessageAggregate;
 
 namespace PXGo.Study.Infrastructure.EntityConfigs;
