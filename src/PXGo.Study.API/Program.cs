@@ -1,9 +1,11 @@
+using Autofac.Extensions.DependencyInjection;
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MySqlConnector;
+using NLog.Web;
 using PXGo.Study.API.Application.Behaviors;
 using PXGo.Study.API.Application.Commands;
 using PXGo.Study.API.Application.Queries;
@@ -16,8 +18,29 @@ using System.Reflection;
 
 /*建立 WebApplicationBuilder 物件*/
 var builder = WebApplication.CreateBuilder(args);
+// Add services to the container.
+IConfiguration configuration = builder.Configuration;
 
 /*透過 builder.Services 將服務加入 DI 容器*/
+
+/*註冊Autofac 與 NLog*/
+builder.Host
+    .ConfigureAppConfiguration((ctx, cfg) =>
+    {
+        var env = ctx.HostingEnvironment;
+        string nlogEnvConfigFile = $"nlog.{env.EnvironmentName}.config";
+        if (System.IO.File.Exists(nlogEnvConfigFile))
+            NLogBuilder.ConfigureNLog(nlogEnvConfigFile);
+        else
+            NLogBuilder.ConfigureNLog("nlog.config");
+        cfg.AddConfiguration(new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", false)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, true)
+            .AddEnvironmentVariables()
+            .Build());
+    })
+    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .UseNLog();
 
 /*註冊控制器的服務*/
 builder.Services.AddControllers(opt =>
@@ -79,9 +102,6 @@ var assemblyNames = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
 var profileAssemblies = assemblyNames.Select(assenbly => Assembly.Load(assenbly)).ToList();
 profileAssemblies.Add(Assembly.GetExecutingAssembly());
 builder.Services.AddAutoMapper(profileAssemblies);
-
-// Add services to the container.
-IConfiguration configuration = builder.Configuration;
 
 /*Transient*/
 /*註冊 EF DBContext */
